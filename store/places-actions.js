@@ -15,14 +15,39 @@ export const addPlace = (title, image) => {
       await FileSystem.moveAsync({
         from: image,
         to: newPath
-      })
+      });
+
+      // TODO: remove this hardcoding later later
+      const address = 'Bangalore';
+      const location = {
+        lat: 0,
+        lng: 0
+      };
+      const dbResult = await insertPlace(
+        title,
+        newPath,
+        address,
+        location.lat,
+        location.lng
+      );
+      console.log(dbResult);
+      dispatch({
+        type: ADD_PLACE,
+        placeData: {
+          id: dbResult.insertId,
+          title,
+          image: newPath,
+          address,
+          coords: {
+            lat: location.lat,
+            lng: location.lng
+          }
+        }
+      });
+
     } catch (error) {
       console.log(error);
     }
-    dispatch({
-      type: ADD_PLACE,
-      placeData: { title, image: newPath }
-    })
   }
 }
 
@@ -83,6 +108,7 @@ export const addPlace = (title, image) => {
 
 export const loadPlaces = () => {
   return async dispatch => {
+    // eslint-disable-next-line no-useless-catch
     try {
       const dbResult = await fetchPlaces();
       console.log(dbResult);
