@@ -3,17 +3,23 @@ import { ScrollView, View, Text, TextInput, StyleSheet, Button } from 'react-nat
 import Colors from '../constants/Colors';
 import { useDispatch } from 'react-redux';
 import * as placesActions from '../store/places-actions';
+import ImagePicker from '../components/ImagePicker';
 
 function NewPlaceScreen(props) {
     const [ titleValue, setTitleValue ] = useState('');
+    const [ selectedImage, setSelectedImage] = useState();
     const dispatch = useDispatch();
 
     const titleChangeHandler = text => {
         setTitleValue(text);
     };
 
+    const imageTakenHandler = imagePath => {
+        setSelectedImage(imagePath);
+    };
+
     const savePlaceHandler = () => {
-        dispatch(placesActions.addPlace(titleValue));
+        dispatch(placesActions.addPlace(titleValue, selectedImage));
         props.navigation.goBack();
     };
 
@@ -26,6 +32,7 @@ function NewPlaceScreen(props) {
                     onChangeText={titleChangeHandler}
                     value={titleValue}
                 />
+                <ImagePicker onImageTaken={imageTakenHandler}/>
                 <Button
                     title="Save Place"
                     color={Colors.primary}
